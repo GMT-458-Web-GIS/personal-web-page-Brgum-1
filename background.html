@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hakkımda - Begumm</title>
+
+  <!-- Uzay stili için Orbitron + Inter -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --text:#e5e7eb;
+      --muted:#cbd5e1;
+      --overlay:rgba(2,6,23,.52);
+      --panel:rgba(255,255,255,.08);
+      --border:rgba(255,255,255,.12);
+      --heading:#ef4444; /* KIRMIZI başlık */
+      --accent:#7c3aed;  /* mor küçük vurgular */
+    }
+    *{box-sizing:border-box}
+    html,body{
+      margin:0; padding:0;
+      color:var(--text);
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      background:url("assets/image/hakkımda.jpeg") center/cover no-repeat fixed;
+      min-height:100%;
+    }
+    body::before{ content:""; position:fixed; inset:0; background:var(--overlay); z-index:0; }
+
+    .container{ max-width:1000px; margin:0 auto; padding:0 16px; position:relative; z-index:1; }
+
+    /* HEADER */
+    .site-header{
+      position:sticky; top:0; z-index:10;
+      background:rgba(2,6,23,.55);
+      backdrop-filter: blur(6px);
+      border-bottom:1px solid var(--border);
+    }
+    nav{ display:flex; justify-content:space-between; align-items:center; min-height:64px; }
+    .logo{ font-family: Orbitron, Inter, sans-serif; font-weight:800; letter-spacing:.6px; color:#fff; text-decoration:none; }
+    .menu{ list-style:none; display:flex; gap:12px; margin:0; padding:0; }
+    .menu a{ color:#fff; text-decoration:none; padding:8px 10px; border-radius:10px; }
+    .menu a:hover{ background:rgba(255,255,255,.12); }
+
+    /* MAIN */
+    main{
+      display:grid; grid-template-columns: 1fr 1.1fr; gap:32px;
+      align-items:center; min-height:calc(100vh - 160px); padding:64px 0;
+    }
+    @media (max-width:860px){ main{ grid-template-columns:1fr; padding:40px 0; } }
+
+    .profile{
+      width:100%; max-width:380px; height:auto; border-radius:14px;
+      object-fit:cover; border:1px solid var(--border);
+      box-shadow:0 12px 28px rgba(0,0,0,.35);
+      justify-self:center;
+    }
+
+    .about{
+      padding:18px; border-radius:16px;
+      background:var(--panel); backdrop-filter: blur(6px);
+      border:1px solid var(--border);
+      animation: fadeUp .8s ease-out both;
+    }
+    .about h1{
+      margin:0 0 10px; font-size:clamp(1.6rem,2.6vw,2.1rem);
+      font-family: Orbitron, Inter, sans-serif; font-weight:800; letter-spacing:.5px;
+      color:var(--heading); /* Kırmızı başlık */
+    }
+    .about p{ line-height:1.75; color:var(--muted); margin:0; }
+
+    @keyframes fadeUp{ from{opacity:0; transform: translateY(10px)} to{opacity:1; transform:none} }
+
+    /* Sol alttaki bilgi butonu */
+    .reveal-cta{
+      position:fixed; left: 28px; bottom:28px;
+      background:rgba(124,58,237,.18);
+      color:#f7ecff; border:1px solid var(--border); border-radius:14px;
+      padding:10px 14px; box-shadow:0 6px 14px rgba(0,0,0,0.35);
+      font-weight:600; cursor:pointer; user-select:none; z-index:6; transition: all 0.3s;
+    }
+    .reveal-cta:hover{ background:rgba(124,58,237,0.28); }
+
+    /* --- GIF koşucu (run.gif) --- */
+    .runner-stage{
+      position:fixed; inset:0; overflow:hidden; z-index:6; pointer-events:none;
+    }
+    .runner-gif{
+      position:absolute;
+      left:-200px;                  /* soldan girsin */
+      bottom:80px;
+      width:140px; height:auto;
+      animation: runAcross 5s ease-in-out forwards;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,0.5));
+    }
+    /* Ortada 1 sn bekleyip sağdan çıksın */
+    @keyframes runAcross{
+      0%   { left:-200px; transform: scale(.9); opacity:.9; }
+      45%  { left: calc(50% - 70px); transform: scale(1); opacity:1; }
+      60%  { left: calc(50% - 70px); transform: scale(1); opacity:1; } /* bekleme */
+      100% { left: 120%; transform: scale(.9); opacity:.9; }
+    }
+
+    /* Konuşma balonu */
+    .speech{
+      position:fixed; left:50%; transform:translateX(-50%); bottom:200px; opacity:0;
+      background:rgba(255,255,255,.96); color:#4a044e; border:1px solid rgba(0,0,0,.1);
+      border-radius:12px; padding:12px 16px; box-shadow:0 12px 28px rgba(0,0,0,.25); z-index:7;
+    }
+    .speech.show{ animation: popIn .5s ease-out forwards; }
+    @keyframes popIn{ from{opacity:0; transform:translate(-50%, 10px) scale(.98)} to{opacity:1; transform:translate(-50%, 0) scale(1)} }
+
+    /* FOOTER */
+    .site-footer{ text-align:center; padding:16px 0; color:var(--muted); background:rgba(2,6,23,.55); border-top:1px solid var(--border); position:relative; z-index:1; }
+  </style>
+</head>
+<body>
+  <!-- HEADER -->
+  <header class="site-header">
+    <nav class="container">
+      <a class="logo" href="index.html">Begumm</a>
+      <ul class="menu">
+        <li><a href="background.html" aria-current="page">Me</a></li>
+        <li><a href="projects.html">Career</a></li>
+        <li><a href="map.html">Map</a></li>
+        <li><a href="hobbies.html">Hobbies</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- MAIN -->
+  <main class="container">
+    <img src="assets/image/pp.jpg" alt="Begüm'ün fotoğrafı" class="profile">
+    <div class="about">
+      <h1>Who Am I?</h1>
+      <p>
+        Hello, I’m Begüm — I’m 23 years old and live in Ankara. I’m a Geomatics Engineering student at Hacettepe University. 
+        My family is originally from Sivas, but I’ve lived in Ankara all my life. I have two sisters and I’m also a proud aunt.
+        <br><br>
+        I’m a curious and thoughtful person who’s always trying to understand life, connect with people, and grow in different ways.
+        Learning, creating, and sharing ideas across various fields make me feel alive. 
+        Although my background is in engineering, I’ve always been deeply interested in psychology — I enjoy listening to people, helping them, and exploring how our emotions and thoughts shape the way we see the world.
+        <br><br>
+        In my free time, I love taking photos and going on long walks. A calm sky always inspires me
+      </p>
+    </div>
+  </main>
+
+  <!-- BİLGİ BUTONU -->
+  <div class="reveal-cta" id="revealCta">Do you want to know something about me? — Click 💫</div>
+
+  <!-- ANİMASYON SAHNESİ -->
+  <div class="runner-stage" id="runnerStage" aria-hidden="true"></div>
+
+  <!-- BALONCUK -->
+  <div class="speech" id="speechBubble">I really enjoy taking psychological tests 💗</div>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <p>&copy; <span id="year"></span> Begumm • Hakkımda Sayfası</p>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    const btn = document.getElementById('revealCta');
+    const stage = document.getElementById('runnerStage');
+    const bubble = document.getElementById('speechBubble');
+
+    // Sadece GIF kullanıyoruz (run.gif)
+    function createRunner(){
+      return `<img class="runner-gif" src="assets/image/run.gif" alt="koşan küçük kız">`;
+    }
+
+    btn.addEventListener('click', ()=>{
+      stage.setAttribute('aria-hidden','false');
+      stage.innerHTML = createRunner();
+
+      // Balonun zamanlaması: GIF ortada 60% civarı, toplam 5s → ~3.0 sn sonra göster
+      bubble.classList.remove('show');
+      setTimeout(()=> bubble.classList.add('show'), 3000);
+    });
+  </script>
+</body>
+</html>

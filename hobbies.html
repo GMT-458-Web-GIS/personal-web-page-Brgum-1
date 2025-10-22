@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hobilerim – Begumm</title>
+
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --sky1:#7ca8ff;
+      --sky2:#5079d8;
+      --text:#0f172a;
+      --muted:#334155;
+      --cloud:#ffffff;
+      --shadow: rgba(15,23,42,0.18);
+      --border: rgba(15,23,42,0.06);
+    }
+
+    *{ box-sizing:border-box; margin:0; padding:0; }
+    body{
+      min-height:100dvh;
+      display:flex; flex-direction:column;
+      font-family: Inter, sans-serif;
+      color:var(--text);
+      background: linear-gradient(180deg, var(--sky1), var(--sky2));
+      overflow-x:hidden;
+    }
+
+    .container{ max-width:1000px; margin:0 auto; padding:0 16px; }
+
+    /* Üst Menü */
+    .site-header{
+      position:sticky; top:0; z-index:10;
+      background: rgba(255,255,255,0.4);
+      backdrop-filter: blur(10px);
+      border-bottom:1px solid var(--border);
+    }
+    nav{ display:flex; align-items:center; justify-content:space-between; min-height:64px; }
+    .logo{
+      font-family: Orbitron, sans-serif;
+      font-weight:700;
+      color:#0b1220;
+      text-decoration:none;
+      letter-spacing:.6px;
+    }
+    .menu{ list-style:none; display:flex; gap:12px; }
+    .menu a{
+      text-decoration:none; color:#0b1220; padding:8px 10px; border-radius:10px;
+    }
+    .menu a:hover{ background: rgba(255,255,255,0.35); }
+
+    /* Başlık */
+    .hero{ padding:44px 0 10px; text-align:center; color:#0b1220; }
+    .hero h1{
+      font-family: Orbitron, sans-serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+      margin-bottom:8px;
+    }
+    .hero p{ opacity:.9; }
+
+    /* Bulut düzeni */
+    .clouds{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:32px;
+      margin:40px 0 60px;
+    }
+
+    /* Bulut stili */
+    .cloud{
+      position:relative;
+      background: var(--cloud);
+      border-radius: 70px;
+      padding:40px 40px 34px;
+      width: 550px;
+      box-shadow:
+        0 10px 22px var(--shadow),
+        inset 0 0 0 6px rgba(255,255,255,0.6);
+      animation: float 6s ease-in-out infinite alternate;
+      overflow: visible;
+      border: 1px solid var(--border);
+    }
+
+    .cloud:nth-child(odd){ align-self:flex-start; margin-left:50px; }
+    .cloud:nth-child(even){ align-self:flex-end; margin-right:50px; }
+
+    .cloud::before,
+    .cloud::after{
+      content:"";
+      position:absolute;
+      background:#fff;
+      border-radius:999px;
+      z-index:0;
+    }
+
+    .cloud::before{
+      width:100px; height:100px; left:80px; top:-48px;
+      box-shadow:
+        90px 12px 0 10px #fff,
+        160px 18px 0 -6px #fff;
+    }
+
+    .cloud::after{
+      width:70px; height:70px; right:60px; top:-26px;
+      box-shadow:
+        -50px 12px 0 10px #fff,
+        -100px 16px 0 6px #fff;
+    }
+
+    .cloud > *{ position:relative; z-index:1; }
+
+    .cloud:hover{
+      transform: translateY(3px);
+      transition: transform .2s ease, box-shadow .2s ease;
+      box-shadow:
+        0 16px 30px rgba(15,23,42,0.24),
+        inset 0 0 0 6px rgba(255,255,255,0.7);
+    }
+
+    @keyframes float{
+      from{ transform:translateY(-6px); }
+      to{ transform:translateY(6px); }
+    }
+
+    .cloud h3{
+      display:flex; align-items:center; gap:10px;
+      font-size:1.1rem;
+      margin-bottom:8px;
+    }
+    .emoji{
+      width:38px; height:38px;
+      display:grid; place-items:center;
+      background:#f1f5f9;
+      border-radius:50%;
+      font-size:22px;
+      border:1px solid var(--border);
+    }
+    .cloud p{ font-size:.95rem; color:#475569; line-height:1.5; }
+
+    @media(max-width:700px){
+      .cloud{
+        width:90%;
+        align-self:center !important;
+        margin:0 !important;
+      }
+    }
+
+    /* Footer */
+    footer{
+      background: rgba(255,255,255,0.4);
+      backdrop-filter: blur(8px);
+      border-top:1px solid var(--border);
+      text-align:center;
+      padding:12px 0;
+      font-size:14px;
+      color:#0b1220;
+      margin-top:auto;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- HEADER -->
+  <header class="site-header">
+    <nav class="container">
+      <a class="logo" href="index.html">Begumm</a>
+      <ul class="menu">
+        <li><a href="background.html">Me</a></li>
+        <li><a href="projects.html">Career</a></li>
+        <li><a href="map.html">Map</a></li>
+        <li><a href="hobbies.html" aria-current="page">Hobbies</a></li>
+      </ul>
+    </nav>
+  </header> 
+
+  <!-- MAIN -->
+  <main class="container">
+    <section class="hero">
+      <h1>Hobbies</h1>
+    </section>
+
+    <section class="clouds">
+      <div class="cloud">
+        <h3><span class="emoji">📷</span></h3>
+        <p>Photography.</p>
+      </div>
+
+      <div class="cloud">
+        <h3><span class="emoji">🎬</span></h3>
+        <p>Watching films</p>
+      </div>
+
+      <div class="cloud">
+        <h3><span class="emoji">✍️</span></h3>
+        <p>Writing my feelings</p>
+      </div>
+
+      <div class="cloud">
+        <h3><span class="emoji">🚶‍♀️</span></h3>
+        <p>long walks</p>
+      </div>
+
+      <div class="cloud">
+        <h3><span class="emoji">🎧</span></h3>
+        <p>Music</p>
+      </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    © 2025 Begumm • Hobilerim
+  </footer>
+</body>
+</html>

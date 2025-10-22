@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Map — Begumm</title>
+
+  <!-- Orbitron + Inter (sitedekiyle aynı) -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- OpenLayers (CDN) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@7.5.2/ol.css">
+
+  <style>
+    :root{
+      --primary:#7c3aed;
+      --accent:#60a5fa;
+      --text:#e5e7eb;
+      --muted:#c7d2fe;
+      --border:#334155;
+      --panel:rgba(2,6,23,0.55);
+    }
+    *{ box-sizing:border-box; }
+    html,body{ margin:0; padding:0; height:100%; }
+    body{
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      color:var(--text);
+      background:
+        linear-gradient(180deg, rgba(2,6,23,0.65), rgba(2,6,23,0.85)),
+        url("assets/image/space.jpeg") center/cover no-repeat fixed;
+      display:flex; flex-direction:column;
+    }
+    .container{ max-width:1100px; margin:0 auto; padding:0 16px; }
+
+    /* Header (sitenin stili) */
+    .site-header{
+      position:sticky; top:0; z-index:10;
+      background:rgba(2,6,23,0.5);
+      border-bottom:1px solid var(--border);
+      backdrop-filter: blur(6px);
+    }
+    nav{ display:flex; align-items:center; justify-content:space-between; min-height:64px; gap:12px; }
+    .logo{
+      font-family: Orbitron, Inter, sans-serif;
+      font-weight:800; letter-spacing:.6px; color:#fff; text-decoration:none;
+    }
+    .menu{ list-style:none; display:flex; gap:12px; padding:0; margin:0; flex-wrap:wrap; }
+    .menu a{ padding:10px 12px; border-radius:12px; color:#fff; text-decoration:none; }
+    .menu a:hover{ background:rgba(124,58,237,0.15); }
+
+    /* Başlık kısa açıklama */
+    .page-hero{ padding:28px 0 8px; }
+    .page-hero h1{
+      margin:0 0 6px; font-family: Orbitron, Inter, sans-serif; font-weight:800;
+      font-size: clamp(1.4rem, 2.4vw, 2rem);
+    }
+    .page-hero p{ margin:0; color:var(--muted); max-width:65ch; }
+
+    /* Map panel */
+    .map-wrap{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:16px; overflow:hidden;
+      box-shadow: 0 6px 14px rgba(15,23,42,.18), 0 0 20px rgba(124,58,237,.25);
+      margin:12px auto 22px; width: calc(100% - 32px);
+      max-width:1100px;
+    }
+    #map{ width:100%; height:70vh; min-height:420px; }
+
+    /* Popup */
+    .ol-popup{
+      position:absolute; background:#0b1220f2; color:#fff;
+      padding:10px 12px; border-radius:12px;
+      border:1px solid rgba(255,255,255,.18); min-width:220px;
+    }
+    .ol-popup .closer{ position:absolute; top:6px; right:8px; color:#fff; text-decoration:none; font-size:16px; }
+    .ol-popup strong{ font-size:15px; }
+
+    /* Footer */
+    .site-footer{ border-top:1px solid var(--border); padding:12px 0; text-align:center; color:#cbd5e1; background:rgba(2,6,23,0.5); }
+  </style>
+</head>
+<body>
+  <!-- HEADER -->
+  <header class="site-header">
+    <nav class="container">
+      <a class="logo" href="index.html">Begumm</a>
+      <ul class="menu">
+        <li><a href="background.html">Me</a></li>
+        <li><a href="projects.html">Career</a></li>
+        <li><a href="map.html" aria-current="page">Map</a></li>
+        <li><a href="hobbies.html">Hobbies</a></li>
+        
+      </ul>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <main class="container">
+    <section class="page-hero">
+      <h1>Places I Want to Visit</h1>
+      <p>Click a marker to see the country name.</p>
+    </section>
+  </main>
+
+  <!-- MAP -->
+  <div class="map-wrap">
+    <div id="map"></div>
+  </div>
+
+  <!-- POPUP -->
+  <div id="popup" class="ol-popup" style="display:none">
+    <a href="#" id="popup-closer" class="closer">✕</a>
+    <div id="popup-content"></div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    © <span id="year"></span> Begumm • OpenLayers Map
+  </footer>
+
+  <!-- OpenLayers JS -->
+  <script src="https://cdn.jsdelivr.net/npm/ol@7.5.2/dist/ol.js"></script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // İşaretlenecek ülkeler
+    const WISH = [
+      { name: "Germany",  lon: 10.4,  lat: 51.2 },
+      { name: "Italy",    lon: 12.5,  lat: 41.9 },
+      { name: "Morocco",  lon: -6.3,  lat: 31.8 },
+      { name: "Japan",    lon: 138.0, lat: 37.0 },
+      { name: "Russia",   lon: 99.0,  lat: 61.0 },
+      { name: "Spain",    lon: -3.7,  lat: 40.4 },
+      { name: "Norway",   lon: 8.5,   lat: 61.0 },
+    ];
+
+    // Harita
+    const map = new ol.Map({
+      target: 'map',
+      layers: [ new ol.layer.Tile({ source: new ol.source.OSM() }) ],
+      view: new ol.View({ center: ol.proj.fromLonLat([15, 40]), zoom: 3 })
+    });
+
+    // Noktalar
+    const features = WISH.map(d => new ol.Feature({
+      geometry: new ol.geom.Point(ol.proj.fromLonLat([d.lon, d.lat])),
+      data: d
+    }));
+
+    const source = new ol.source.Vector({ features });
+    const layer  = new ol.layer.Vector({
+      source,
+      style: new ol.style.Style({
+        image: new ol.style.Circle({
+          radius: 8,
+          fill:  new ol.style.Fill({ color: 'rgba(96,165,250,0.95)' }),
+          stroke:new ol.style.Stroke({ color: '#0b1220', width: 1 })
+        })
+      })
+    });
+    map.addLayer(layer);
+
+    // Popup
+    const container = document.getElementById('popup');
+    const content   = document.getElementById('popup-content');
+    const closer    = document.getElementById('popup-closer');
+
+    const overlay = new ol.Overlay({
+      element: container,
+      autoPan: { animation: { duration: 200 } }
+    });
+    map.addOverlay(overlay);
+
+    closer.onclick = () => { overlay.setPosition(undefined); container.style.display='none'; return false; };
+
+    map.on('singleclick', (evt) => {
+      overlay.setPosition(undefined);
+      container.style.display='none';
+      map.forEachFeatureAtPixel(evt.pixel, (feature) => {
+        const d = feature.get('data');
+        content.innerHTML = `<strong>${d.name}</strong><br><small>Wish list</small>`;
+        container.style.display = 'block';
+        overlay.setPosition(evt.coordinate);
+      }, { hitTolerance: 6 });
+    });
+
+    // Güzel başlangıç için tüm noktaları kadraja al
+    const extent = source.getExtent();
+    if (extent && !ol.extent.isEmpty(extent)) {
+      map.getView().fit(extent, { duration: 450, padding: [40,40,40,40], maxZoom: 5 });
+    }
+  </script>
+</body>
+</html>

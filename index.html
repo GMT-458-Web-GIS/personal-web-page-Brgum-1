@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BEGUM'S PAGE</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===== Tema ve temeller ===== */
+    :root{
+      --primary:#7c3aed; /* mor vurgu (buton) */
+      --accent:#60a5fa;  /* mavi vurgu (link) */
+      --text:#e5e7eb;    /* açık gri metin */
+      --muted:#c7d2fe;   /* ikincil metin */
+      --border:#334155;  /* koyu sınır */
+    }
+    *{ box-sizing:border-box; }
+    html,body{
+      margin:0; padding:0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      color:var(--text);
+      background:
+        linear-gradient(180deg, rgba(2,6,23,0.65), rgba(2,6,23,0.85)),
+        url("assets/image/space.jpeg") center/cover no-repeat fixed;
+    }
+    a{ color:var(--accent); text-decoration:none; }
+    a:hover{ text-decoration:underline; }
+
+    /* ===== Layout ===== */
+    .container{ max-width:1000px; margin:0 auto; padding:0 16px; }
+    .site-header{
+      position:sticky; top:0;
+      background:rgba(2,6,23,0.5);
+      border-bottom:1px solid var(--border);
+      z-index:50;
+    }
+    .nav{ display:flex; align-items:center; justify-content:space-between; min-height:64px; gap:12px; }
+    .menu{ list-style:none; display:flex; gap:12px; padding:0; margin:0; flex-wrap:wrap; }
+    .menu a{ padding:10px 12px; border-radius:12px; }
+    .menu a:hover{ background:rgba(124,58,237,0.15); text-decoration:none; }
+    .logo{
+      font-family: Orbitron, Inter, sans-serif;
+      font-weight:800; letter-spacing:0.5px; color:var(--text);
+    }
+
+    main{ min-height:calc(100vh - 200px); }
+
+    /* ===== Hero ===== */
+    .hero{ padding: 90px 0 56px; text-align:center; }
+    .hero h1{
+      font-family: Orbitron, Inter, sans-serif;
+      font-weight:800;
+      font-style:italic; /* isteğin: italik + kalın */
+      font-size: clamp(1.9rem, 3.8vw, 3rem);
+      margin:0 0 12px;
+      opacity:0; transform: translateY(16px);
+      animation: fadeUp 900ms ease-out forwards;
+    }
+    .hero .lead{
+      color:var(--muted);
+      max-width:60ch; margin:0 auto;
+      opacity:0; transform: translateY(16px);
+      animation: fadeUp 900ms 120ms ease-out forwards;
+    }
+    /* (Butonlar kaldırıldığı için .actions/.cta kullanmıyoruz;
+       istersen bu CSS’leri silebilirsin.) */
+    .actions{ display:inline-flex; gap:12px; margin-top:24px; }
+    .cta{
+      display:inline-block; padding:12px 18px;
+      background:var(--primary); color:#fff; border-radius:14px;
+      box-shadow:0 6px 16px rgba(124,58,237,0.25);
+      opacity:0; transform: translateY(8px);
+      animation: fadeUp 900ms 220ms ease-out forwards;
+    }
+    .cta--secondary{
+      background:transparent; color:var(--text);
+      border:1.5px solid rgba(229,231,235,0.8); box-shadow:none;
+    }
+    .cta--secondary:hover{ background: rgba(255,255,255,0.12); }
+
+    /* ===== Kartlar + animasyon ===== */
+    .grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap:16px; padding:32px 0; }
+    .card{
+      background: rgba(2,6,23,0.55);
+      border:1px solid var(--border);
+      border-radius:16px; padding:16px;
+      box-shadow: 0 6px 14px rgba(15,23,42,0.18), 0 0 20px rgba(124,58,237,0.3);
+      opacity: 0;
+      transform: translateY(30px) scale(0.97);
+      animation: cardUp 1s ease-out forwards;
+    }
+    .card:nth-child(1){ animation-delay: 0.20s; }
+    .card:nth-child(2){ animation-delay: 0.40s; }
+    .card:nth-child(3){ animation-delay: 0.60s; }
+    .card:nth-child(4){ animation-delay: 0.80s; }
+
+    .badge{ display:inline-block; font-size:12px; background:rgba(124,58,237,0.15); color:#ddd; padding:4px 8px; border-radius:999px; }
+
+    /* ===== Footer ===== */
+    .site-footer{ border-top:1px solid var(--border); padding:16px 0; background:rgba(2,6,23,0.5); }
+    .site-footer p{ margin:0; color:#cbd5e1; font-size:14px; }
+
+    /* ===== Logo üstü göz animasyonu ===== */
+    .logo-anim{ display:inline-flex; gap:8px; align-items:center; margin-right:12px; }
+    .logo-anim .eye{
+      width:24px; height:24px; border-radius:50%; background:#fff;
+      display:grid; place-items:center;
+      box-shadow: 0 0 12px rgba(96,165,250,0.6), inset 0 0 6px rgba(0,0,0,0.2);
+    }
+    .logo-anim .pupil{
+      width:10px; height:10px; border-radius:50%;
+      background: radial-gradient(circle at 35% 35%, #111 0%, #000 60%);
+      transform: translate(0px, 0px);
+      transition: transform 60ms linear;
+    }
+
+    /* ===== Keyframes ===== */
+    @keyframes fadeUp{
+      from{ opacity:0; transform: translateY(16px); }
+      to{ opacity:1; transform: translateY(0); }
+    }
+    @keyframes cardUp {
+      from { opacity: 0; transform: translateY(30px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* ===== Responsive ufak düzeltmeler ===== */
+    @media (max-width:480px){
+      .menu a{ padding:8px 10px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- HEADER -->
+  <header class="site-header">
+    <nav class="container nav">
+      <!-- Göz animasyonu (logo üstü) -->
+      <div class="logo-anim" aria-hidden="true">
+        <div class="eye"><div class="pupil"></div></div>
+        <div class="eye"><div class="pupil"></div></div>
+      </div>
+
+      <!-- Logo -->
+      <a class="logo" href="index.html" aria-current="page">Begumm</a>
+
+      <!-- Menü -->
+      <ul class="menu">
+        <li><a href="background.html">Me</a></li>
+        <li><a href="projects.html">Career</a></li>
+        <li><a href="map.html">Map</a></li>
+        <li><a href="hobbies.html">Hobbies</a></li>
+        
+      </ul>
+    </nav>
+  </header>
+
+  <!-- MAIN -->
+  <main>
+    <!-- HERO (butonlar kaldırıldı) -->
+    <section class="hero container">
+      <h1>Hello, I'm Begüm — welcome to my page!</h1>
+      <p class="lead">
+        This website is a place where you can get to know me better — my hobbies, career, dreams, and so much more.
+      </p>
+      <!-- actions ve butonlar kaldırıldı -->
+    </section>
+
+    <!-- Kartlar (kişisel) -->
+    <section class="container grid">
+      <article class="card">
+        <span class="badge">🚀 Aspirations</span>
+        <h3>Exploring New Places</h3>
+        <p>“I’m endlessly curious about the world and beyond — from the icy poles to the vastness of space, I love learning and exploring the unknown.”</p>
+      </article>
+
+      <article class="card">
+        <span class="badge">💫 Hobbies</span>
+        <h3>Activities That Nourish My Soul</h3>
+        <p>Creative activities like watching films, capturing moments through my lens, writing, and bringing new ideas to life feed my soul.
+            They’re how I express who I am.</p>
+      </article>
+
+      <article class="card">
+        <span class="badge">🌙 My Dreams</span>
+        <h3>Reaching for the Stars</h3>
+        <p>I strive to push boundaries in both my career and personal life, believing that even the impossible can be achieved with enough passion and persistence.</p>
+      </article>
+
+      <article class="card">
+        <span class="badge">🪐 My Interests</span>
+        <h3>Psychology and Science</h3>
+        <p>Understanding human behavior and the order of the universe fascinates me equally — both reveal the beauty of how everything connects.</p>
+      </article>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; <span id="year"></span> Begumm • A1</p>
+    </div>
+  </footer>
+
+  <!-- JS (göz bebekleri mouse'u takip etsin + yıl) -->
+  <script>
+    // Yıl
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Göz animasyonu
+    (function(){
+      const eyes = document.querySelectorAll('.logo-anim .eye');
+      const max = 6; // px: bebeğin göz merkezinden en fazla uzaklaşacağı yarıçap
+      function handleMove(e){
+        eyes.forEach(eye=>{
+          const rect = eye.getBoundingClientRect();
+          const cx = rect.left + rect.width/2;
+          const cy = rect.top + rect.height/2;
+          const dx = e.clientX - cx;
+          const dy = e.clientY - cy;
+          const angle = Math.atan2(dy, dx);
+          const px = Math.cos(angle) * max;
+          const py = Math.sin(angle) * max;
+          eye.querySelector('.pupil').style.transform = `translate(${px}px, ${py}px)`;
+        });
+      }
+      window.addEventListener('mousemove', handleMove, { passive:true });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kariyer – Begumm</title>
+
+  <!-- Font: Orbitron + Inter -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --primary:#7c3aed;
+      --accent:#60a5fa;
+      --text:#e5e7eb;
+      --muted:#cbd5e1;
+      --border:#334155;
+      --panel:rgba(2,6,23,0.55);
+      --overlay: rgba(2,6,23,0.55);
+      --spark:#ffd7ff;
+      --spark2:#9ae6ff;
+      --heading:#ef4444;
+    }
+
+    *{box-sizing:border-box}
+    html,body{
+      margin:0; padding:0;
+      color:var(--text);
+      background:
+        linear-gradient(180deg, rgba(2,6,23,0.65), rgba(2,6,23,0.85)),
+        url("assets/image/uydu.jpeg") center/cover no-repeat fixed;
+      min-height:100%;
+    }
+
+    /* ==== Sticky footer yapısı ==== */
+    body{
+      display:flex; flex-direction:column;
+      font-family: 'Orbitron', Inter, sans-serif;
+    }
+    main{ flex:1; }
+
+    body::before{
+      content:""; position:fixed; inset:0; background:var(--overlay);
+      pointer-events:none; z-index:0;
+    }
+
+    .container{ max-width:1100px; margin:0 auto; padding:0 16px; position:relative; z-index:1; }
+
+    /* Header */
+    .site-header{
+      position:sticky; top:0; z-index:10;
+      background:rgba(2,6,23,0.6);
+      border-bottom:1px solid var(--border);
+      backdrop-filter: blur(6px);
+    }
+    nav{ display:flex; align-items:center; justify-content:space-between; min-height:64px; }
+    .logo{ font-weight:700; color:var(--text); text-decoration:none; letter-spacing:1px; }
+    .menu{ list-style:none; display:flex; gap:12px; padding:0; margin:0; }
+    .menu a{ padding:10px 12px; border-radius:12px; color:var(--text); text-decoration:none; }
+    .menu a:hover{ background:rgba(124,58,237,0.15); }
+
+    /* Başlık */
+    .page-hero{ padding:48px 0 16px; }
+    .page-hero h1{ margin:0; font-weight:700; font-size:clamp(1.7rem,2.8vw,2.3rem); letter-spacing:1px; }
+    .page-hero p{ margin:10px 0 0; color:var(--muted); max-width:70ch; font-family:Inter,sans-serif; }
+
+    /* Butonlar */
+    .tabs{ display:flex; flex-wrap:wrap; gap:10px; margin:22px 0 14px; }
+    .tab-btn{
+      appearance:none; border:none; cursor:pointer;
+      padding:10px 14px; border-radius:12px;
+      background:rgba(124,58,237,0.18);
+      color:#f3e8ff; font-weight:600; font-family:Inter,sans-serif;
+      border:1px solid var(--border);
+      box-shadow:0 6px 14px rgba(15,23,42,.18);
+      transition: transform .12s ease, background .2s ease;
+    }
+    .tab-btn:hover{ transform:translateY(-1px); background:rgba(124,58,237,0.28); }
+    .tab-btn[aria-expanded="true"]{
+      outline:2px solid rgba(96,165,250,.6);
+      background:rgba(96,165,250,.22);
+    }
+
+    /* Paneller */
+    .panel{
+      overflow:hidden;
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:16px;
+      box-shadow:0 6px 14px rgba(15,23,42,.18);
+      max-height:0; opacity:0; transform:translateY(6px);
+      transition:max-height .55s ease,opacity .35s ease,transform .35s ease;
+      will-change:max-height,opacity,transform;
+      margin-bottom:14px;
+    }
+    .panel.open{ opacity:1; transform:translateY(0); }
+    .panel__inner{ padding:18px; display:grid; gap:14px; }
+    .panel__title{ font-weight:700; margin:0; letter-spacing:.5px; }
+    .panel__p{ color:var(--muted); margin:0; line-height:1.65; font-family:Inter,sans-serif; }
+
+    /* Staj içi alt bloklar */
+    .subcard{
+      background: rgba(255,255,255,0.04);
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:14px;
+    }
+    .subcard h4{ margin:0 0 8px; font-weight:700; letter-spacing:.3px; }
+    .meta{ color:#cbd5e1; font-size:13px; font-family:Inter,sans-serif; }
+
+    /* Logo şeridi */
+    .logo-row{
+      display:flex; flex-wrap:wrap; gap:10px;
+      align-items:center; margin-top:8px;
+    }
+    .logo-item{
+      width:40px; height:40px; border-radius:10px;
+      background:rgba(255,255,255,0.08);
+      border:1px solid var(--border);
+      display:grid; place-items:center;
+      transition: transform .2s ease, box-shadow .2s ease;
+      box-shadow: 0 4px 10px rgba(0,0,0,.15);
+    }
+    .logo-item img{ width:24px; height:24px; object-fit:contain; }
+    .logo-item:hover{ transform: translateY(-2px) scale(1.05); box-shadow: 0 8px 18px rgba(0,0,0,.25); }
+
+    /* Capstone özel stiller */
+    .panel--capstone{ box-shadow:0 6px 16px rgba(15,23,42,.22), 0 0 20px rgba(239,68,68,.15); }
+    .capstone-head .panel__title{ color:var(--heading); }
+    .capstone-head .panel__meta{ margin:6px 0 10px; color:var(--muted); font-family:Inter,sans-serif; }
+    .capstone-toc{ display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 10px; }
+    .capstone-toc a{
+      color:#e5e7eb; text-decoration:none;
+      font-size:.9rem; padding:6px 10px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.18);
+      background:rgba(255,255,255,.06);
+      font-family:Inter,sans-serif;
+    }
+    .capstone-toc a:hover{ background:rgba(255,255,255,.14); }
+
+    .capstone-section{
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      padding: 14px;
+    }
+    .cap-title{
+      margin:0 0 8px; color:var(--heading);
+      font-weight:700; font-size:1.05rem;
+    }
+    .cap-list{ margin:0; padding-left:18px; font-family:Inter,sans-serif; }
+    .cap-list li{ margin:6px 0; }
+
+    /* Görsel gridleri (Workflow + Design) */
+    .img-grid, .design-grid{
+      display:grid; gap:10px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+    .img-grid img, .design-grid img{
+      width:100%; height:auto; border-radius:12px;
+      border:1px solid rgba(255,255,255,0.12);
+      background:#0b1020; object-fit:cover;
+    }
+
+    /* Output özel düzen: üstte iki yan yana, altta iki tam genişlik (alt alta) */
+    .output-grid{
+      display:grid; gap:10px;
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .output-grid img{
+      width:100%; height:auto; border-radius:12px;
+      border:1px solid rgba(255,255,255,0.12);
+      background:#0b1020; object-fit:cover;
+    }
+    .output-grid .span-full{ grid-column: 1 / -1; }
+
+    /* Sparkle */
+    .effects{ position:fixed; inset:0; pointer-events:none; z-index:5; }
+    .spark{
+      position:absolute; width:8px; height:8px; border-radius:50%;
+      background: radial-gradient(circle at 35% 35%, var(--spark) 0%, var(--spark2) 70%, transparent 72%);
+      filter: blur(.3px) drop-shadow(0 0 6px rgba(255,255,255,.6));
+      animation: sparkle 800ms ease-out forwards;
+      opacity:.9;
+    }
+    @keyframes sparkle{
+      from{ transform:translate(0,0) scale(.6); opacity:0; }
+      70% { opacity:1; }
+      to  { transform:translate(var(--dx,30px), var(--dy,-30px)) scale(1.2); opacity:0; }
+    }
+
+    /* Footer */
+    .site-footer{ border-top:1px solid var(--border); padding:16px 0; background:rgba(2,6,23,0.6); }
+    .site-footer p{ margin:0; color:#cbd5e1; font-size:14px; text-align:center; }
+
+    /* ——— Sağ üst tetik butonu ——— */
+    .mascot-btn{
+      position: fixed; top: 14px; right: 16px;
+      width: 42px; height: 42px; border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.25);
+      background: radial-gradient(circle at 30% 30%, #fff 0%, #f5f3ff 40%, #e9d5ff 100%);
+      color:#111; font-size: 20px; line-height: 42px; text-align:center;
+      box-shadow: 0 8px 18px rgba(0,0,0,.25);
+      cursor: pointer; z-index: 20;
+    }
+    .mascot-btn:hover{ filter: brightness(1.06); }
+
+    /* ——— Yüz sahnesi ——— */
+    .face-stage{ position: fixed; inset: 0; pointer-events: none; z-index: 19; }
+
+    /* ——— Yüz (CSS çizimi) ——— */
+    .face{
+      position: fixed; left: 14px; top: 35%;
+      transform: translate(-50%,-50%) scale(.6);
+      width: 140px; height: 140px; border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #ffe 0%, #ffd8d8 55%, #ffc0f0 100%);
+      box-shadow: 0 20px 40px rgba(0,0,0,.35), inset 0 -12px 24px rgba(0,0,0,.08);
+      animation: facePop 1.8s ease-out forwards;
+    }
+    .face::after{
+      content:""; position:absolute; left:18px; top:18px; width:36px; height:22px; border-radius:50%;
+      background: radial-gradient(circle, rgba(255,255,255,.9), transparent 70%);
+      filter: blur(1px);
+    }
+    .eye{
+      position:absolute; top:46%; width:18px; height:18px; border-radius:50%;
+      background:#111;
+      animation: blink 3.2s infinite;
+    }
+    .eye.left{ left: 38px; }
+    .eye.right{ right: 38px; }
+    .brow{
+      position:absolute; width:26px; height:8px; border-radius: 8px;
+      background: rgba(0,0,0,.18); top: 38%;
+    }
+    .brow.left{ left: 30px; transform: rotate(-10deg); }
+    .brow.right{ right: 30px; transform: rotate(10deg); }
+    .mouth{
+      position:absolute; left:50%; bottom:34px; transform: translateX(-50%);
+      width:56px; height:30px; border-radius: 0 0 56px 56px;
+      background: #ff5a8a; box-shadow: inset 0 8px 0 rgba(255,255,255,.35);
+    }
+
+    @keyframes facePop{
+      0%   { transform: translate(-50%,-50%) scale(.6); opacity:0; }
+      45%  { transform: translate(-50%,-50%) scale(1.06); opacity:1; }
+      65%  { transform: translate(-50%,-50%) scale(1.00); }
+      100% { transform: translate(-50%,-60%) scale(.92); opacity:0; }
+    }
+    @keyframes blink{
+      0%, 92%, 100% { height:18px; }
+      95%           { height:2px; }
+    }
+
+    /* Okul Dışı: foto + yazı (caption) grid */
+    .figure-grid{
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+    .figure-grid figure{
+    margin: 0;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 8px;
+    transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .figure-grid figure:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(0,0,0,.25);
+    }
+    .figure-grid img{
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 8px;
+    object-fit: cover;
+    }
+    .figure-grid figcaption{
+    text-align: center;
+    font-family: Inter, sans-serif;
+    font-size: .92rem;
+    color: var(--muted);
+    padding: 8px 4px 2px;
+    }
+
+  </style>
+</head>
+<body>
+  <!-- HEADER -->
+  <header class="site-header">
+    <nav class="container">
+      <a class="logo" href="index.html">Begumm</a>
+      <ul class="menu">
+        <li><a href="background.html">Me</a></li>
+        <li><a href="projects.html" aria-current="page">Career</a></li>
+        <li><a href="map.html">Map</a></li>
+        <li><a href="hobbies.html">Hobbies</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Sağ üst tetik butonu + yüz sahnesi -->
+  <button class="mascot-btn" id="mascotBtn" aria-label="Show face">😊</button>
+  <div class="face-stage" id="faceStage" aria-hidden="true"></div>
+
+  <!-- MAIN -->
+  <main class="container">
+    <section class="page-hero">
+      <h1>Why Geomatics Engineering?</h1>
+      <p>
+        I’ve always been fascinated by how technology transforms human life. 
+        Geomatics engineering builds a bridge between space technologies and our understanding of the Earth. My interest in satellite systems, mapping, positioning, and data analysis played a major role in my decision to pursue this field. 
+        It’s a discipline that combines the logic of engineering with the excitement of discovery.
+      </p>
+    </section>
+
+    <!-- Butonlar -->
+    <div class="tabs" role="tablist" aria-label="Kariyer bölümleri">
+      <button class="tab-btn" data-target="staj" aria-controls="panel-staj" aria-expanded="false">Internship</button>
+      <button class="tab-btn" data-target="calisma" aria-controls="panel-calisma" aria-expanded="false">Work</button>
+      <button class="tab-btn" data-target="bitirme" aria-controls="panel-bitirme" aria-expanded="false">Final Project</button>
+      <button class="tab-btn" data-target="okuldisi" aria-controls="panel-okuldisi" aria-expanded="false">Okul Dışı</button>
+    </div>
+
+    <!-- ==== STAJ PANELİ ==== -->
+    <section id="panel-staj" class="panel">
+      <div class="panel__inner">
+        <h3 class="panel__title">Internship</h3>
+
+        <!-- 1. Staj -->
+        <div class="subcard">
+          <h4>Internship 1 — 4th Regional Directorate of Highways <span class="meta">• 2023 Summer • Ankara</span></h4>
+          <p class="panel__p">
+            I completed my first internship at the 4th Regional Directorate of Highways, in the Real Estate and Expropriation Department. 
+            During this period, I had the opportunity to closely observe and take part in the expropriation phases of highway projects. 
+            Using Netcad, I worked on road design and editing tasks, and also participated in fieldwork activities such as surveying and setting out (aplikasyon). 
+            I reviewed expropriation case files and land registry documents, which allowed me to gain insight into both the technical and legal aspects of the process. 
+            This internship helped me reinforce my theoretical knowledge and experience real-world applications of geomatics engineering.
+          </p>
+          <div class="logo-row" aria-label="Kullandığım araçlar (1. staj)">
+            <div class="logo-item" title="Microstation"><img src="assets/image/logos/mc.png" alt="Microstation"></div>
+            <div class="logo-item" title="Netcad"><img src="assets/image/logos/netcad.jpg" alt="Netcad"></div>
+          </div>
+        </div>
+
+        <!-- 2. Staj -->
+        <div class="subcard">
+          <h4>Internship 2 — MipMap Technology <span class="meta">• 2024 Summer • Ankara</span></h4>
+          <p class="panel__p">
+            I completed my second internship at MipMap Technology. 
+            I mainly worked on 3D model editing, 2D drafting, and architectural design projects, exploring the design and visualization aspects of geomatics engineering.
+          </p>
+          <div class="logo-row" aria-label="Kullandığım araçlar (2. staj)">
+            <div class="logo-item" title="Microstation"><img src="assets/image/logos/mc.png" alt="Microstation"></div>
+            <div class="logo-item" title="Global Mapper"><img src="assets/image/logos/gm.png" alt="Global Mapper"></div>
+            <div class="logo-item" title="ArcGIS Pro"><img src="assets/image/logos/arc.png" alt="ArcGIS Pro"></div>
+          </div>
+        </div>
+
+        <div class="subcard">
+          <h4>My Achievements</h4>
+          <ul class="panel__p" style="margin:0 0 0 16px; font-family:Inter,sans-serif;">
+            <li><strong>Technical drawing and 3D modeling skills</strong></li>
+            <li><strong>Field measurement and data analysis experience</strong></li>
+            <li><strong>Teamwork and communication abilities</strong></li>
+            <li><strong>Continuous learning & research motivation</strong></li>
+            <li><strong>Attention to detail and observation</strong></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ÇALIŞMA -->
+    <section id="panel-calisma" class="panel">
+      <div class="panel__inner">
+        <h3 class="panel__title">Work Experience</h3>
+        <p class="panel__p">
+          After my internship at MipMap Technology, I continued working at the company on 3D modeling, architectural drawing and map-based design projects. I’m currently working freelance on drawing and project support tasks.
+        </p>
+      </div>
+    </section>
+
+    <!-- BİTİRME -->
+    <section id="panel-bitirme" class="panel panel--capstone">
+      <div class="panel__inner">
+        <header class="capstone-head">
+          <h3 class="panel__title">🛰️ DEVELOPMENT OF A TOOL FOR RELATIVE POSITIONING WITH SMARTPHONE GNSS OBSERVATION</h3>
+          <p class="panel__meta">Hacettepe Geomatik • 2025</p>
+          <nav class="capstone-toc">
+            <a href="#cp-problem">Problem</a>
+            <a href="#cp-purpose">Purpose</a>
+            <a href="#cp-limitations">Limitations</a>
+            <a href="#cp-workflow">Workflow</a>
+            <a href="#cp-design">Design</a>
+            <a href="#cp-output">Output</a>
+            <a href="#cp-conclusion">Conclusion</a>
+          </nav>
+        </header>
+
+        <!-- Problem -->
+        <article id="cp-problem" class="capstone-section">
+          <h4 class="cap-title">Problem Definition</h4>
+          <p class="panel__p" style="font-family:Inter,sans-serif;">
+            <em>GNSS receivers in smartphones</em> provide lower positional accuracy than geodetic-grade devices due to higher measurement noise, multipath effects and frequent phase breaks.
+          </p>
+        </article>
+
+        <!-- Purpose -->
+        <article id="cp-purpose" class="capstone-section">
+          <h4 class="cap-title">Purpose</h4>
+          <p class="panel__p" style="font-family:Inter,sans-serif;">
+            Improve smartphone-based positioning accuracy using DGPS correction data computed from TUSAGA-AKTİF stations; evaluate gains against standard SPP.
+          </p>
+        </article>
+
+        <!-- Limitations -->
+        <article id="cp-limitations" class="capstone-section">
+          <h4 class="cap-title">Limitations</h4>
+          <ul class="cap-list">
+            <li>Raw GNSS measurements on Android are limited by SDK/device support.</li>
+            <li>iOS does not expose raw GNSS due to platform policies.</li>
+            <li>Requires internet for real-time corrections.</li>
+            <li>Not usable indoors; GNSS signals unavailable.</li>
+            <li>Multipath can degrade accuracy in urban canyons.</li>
+          </ul>
+        </article>
+
+        <!-- Workflow: SADECE RESİM -->
+        <article id="cp-workflow" class="capstone-section">
+          <h4 class="cap-title">Workflow</h4>
+          <div class="img-grid">
+            <!-- YOLLARI kendi dosyalarına göre değiştir -->
+            <img src="assets/image/Resim2.png" alt="Workflow step 1">
+            
+          </div>
+        </article>
+
+        <!-- Design: SADECE RESİM -->
+        <article id="cp-design" class="capstone-section">
+          <h4 class="cap-title">Design</h4>
+          <div class="design-grid">
+            <img src="assets/image/Resim1.png" alt="Design mockup 1">
+          </div>
+        </article>
+
+        <!-- Output: üstte iki yan yana + altta iki tam genişlik -->
+        <article id="cp-output" class="capstone-section">
+          <h4 class="cap-title">Output</h4>
+          <div class="output-grid">
+            <!-- Üst sıra: iki yan yana -->
+            <img src="assets/image/Resim3.png" alt="Output map view 1">
+            <img src="assets/image/Resim4.png" alt="Output map view 2">
+            <!-- Alt sıra: iki görsel tam genişlik, alt alta -->
+            <img class="span-full" src="assets/image/Resim5.png" alt="Output detail 1">
+            <img class="span-full" src="assets/image/Resim6.png" alt="Output detail 2">
+          </div>
+        </article>
+
+        <!-- Conclusion -->
+        <article id="cp-conclusion" class="capstone-section">
+          <h4 class="cap-title">Conclusion</h4>
+          <p class="panel__p" style="font-family:Inter,sans-serif;">
+            The relative approach with DGPS corrections substantially improves smartphone GNSS accuracy; horizontal ≈ 5 m and vertical ≈ 10 m levels were achievable in tests, outperforming SPP.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <!-- OKUL DIŞI -->
+    <!-- OKUL DIŞI -->
+<section id="panel-okuldisi" class="panel">
+    <div class="panel__inner">
+      <h3 class="panel__title">Okul Dışı</h3>
+      <p class="panel__p">
+        Beyond my academic life, I’ve accomplished several things that helped me grow both personally and professionally.
+      </p>
+  
+      <div class="figure-grid" aria-label="Etkinlikler ve açıklamaları">
+        <figure>
+          <img src="assets/image/beg.jpg" alt="OSM atölyesinde harita düzenleme oturumu">
+          <figcaption>I presented my research on the polar regions at an event in Bulgaria, sharing my findings and insights with an international audience.</figcaption>
+        </figure>
+  
+        <figure>
+          <img src="assets/image/23.jpg" alt="Arazide ekip ile ölçüm çalışması">
+          <figcaption>I participated in the “23” organization, starting with the summit and advancing all the way to the camp qualification stage.</figcaption>
+        </figure>
+  
+        <figure>
+          <img src="assets/image/hkmo.jpg" alt="Harita tabanlı mini hackathon ortamı">
+          <figcaption>I took part as a student representative at the Ankara Branch of the Chamber of Survey and Cadastre Engineers (HKMO).</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+  
+
+  <!-- Sparkle Efekti -->
+  <div class="effects" id="effects"></div>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>© 2025 Begumm • Kariyer Sayfası</p>
+    </div>
+  </footer>
+
+  <script>
+    // Paneller
+    const buttons = document.querySelectorAll('.tab-btn');
+    const effects = document.getElementById('effects');
+
+    function setPanelMaxHeight(panel){
+      const inner = panel.querySelector('.panel__inner');
+      if(!inner) return;
+      const full = inner.offsetHeight + 24;
+      panel.style.maxHeight = full + 'px';
+    }
+    function openPanel(panel){
+      setPanelMaxHeight(panel);
+      panel.classList.add('open');
+    }
+    function closePanel(panel){
+      panel.style.maxHeight = '0px';
+      panel.classList.remove('open');
+    }
+
+    // Sparkle (ışıltı)
+    function spawnSparkles(x, y, count = 12){
+      for(let i=0;i<count;i++){
+        const s = document.createElement('div');
+        s.className = 'spark';
+        const dx = (Math.random()*80 - 40) + 'px';
+        const dy = (Math.random()*-80) + 'px';
+        s.style.left = (x + (Math.random()*24-12)) + 'px';
+        s.style.top  = (y + (Math.random()*12-6)) + 'px';
+        s.style.setProperty('--dx', dx);
+        s.style.setProperty('--dy', dy);
+        effects.appendChild(s);
+        setTimeout(()=> s.remove(), 820);
+      }
+    }
+
+    buttons.forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const id = btn.dataset.target;
+        const panel = document.getElementById('panel-'+id);
+        const isOpen = panel.classList.contains('open');
+
+        // aria-expanded güncelle
+        buttons.forEach(b=> b.setAttribute('aria-expanded','false'));
+
+        if(isOpen){
+          closePanel(panel);
+          btn.setAttribute('aria-expanded','false');
+        } else {
+          document.querySelectorAll('.panel.open').forEach(p=>closePanel(p));
+          openPanel(panel);
+          btn.setAttribute('aria-expanded','true');
+
+          const rect = btn.getBoundingClientRect();
+          spawnSparkles(rect.left + rect.width/2, rect.top + window.scrollY);
+          spawnFace(); // sekme açılırken yüz animasyonu da çıksın
+        }
+      });
+    });
+
+    // Açık panel boyunu pencere/resim yüklenince güncelle
+    function recalcOpenPanels(){
+      document.querySelectorAll('.panel.open').forEach(setPanelMaxHeight);
+    }
+    window.addEventListener('resize', recalcOpenPanels);
+    window.addEventListener('load', recalcOpenPanels);
+    document.querySelectorAll('.panel img').forEach(img=>{
+      img.addEventListener('load', recalcOpenPanels);
+    });
+
+    // ——— Yüz üretici ———
+    function spawnFace(){
+      const stage = document.getElementById('faceStage');
+      if(!stage) return;
+
+      const face = document.createElement('div');
+      face.className = 'face';
+      face.innerHTML = `
+        <div class="brow left"></div>
+        <div class="brow right"></div>
+        <div class="eye left"></div>
+        <div class="eye right"></div>
+        <div class="mouth"></div>
+      `;
+      stage.appendChild(face);
+      setTimeout(()=>{ face.remove(); }, 1850);
+    }
+
+    // ——— Sağ üst buton ———
+    const mascotBtn = document.getElementById('mascotBtn');
+    if(mascotBtn){
+      mascotBtn.addEventListener('click', ()=> spawnFace());
+    }
+  </script>
+</body>
+</html>
